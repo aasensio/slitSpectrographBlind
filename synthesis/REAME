@@ -1,0 +1,26 @@
+These routines can be used to generate a sampling of atmospheric PSFs and
+degrade a 3D cube extracted from a simulation of the solar atmosphere.
+
+## genPSF.py
+It generates a set of atmospheric PSFs for a telescope of 1.5 m (similar to the
+GREGOR solar telescope on the Teide Observatory) with a central obscuration of 30%
+and a spider. The wavefronts are obtained as linear combination of Zernike polynomials
+with coefficients extracted from a multivariate normal distribution with zero mean
+and covariance given by the covariance matrix obtained for Kolmogorov turbulence.
+The PSFs are obtained via Fourier transform of the aperture and the wavefront phases.
+They have been obtained for a Fried radius of 20 cm, which is representative of
+quite good observing conditions. We generate 50 PSFs per position of the spectrograph
+to mimic rapid expositions.
+
+## convolve.py
+Convolve the 3D cube with the PSFs, generating an array of size [nLambda, nPix, nPix, nImages].
+nLambda is the spectral direction, which can be considered for the multi-object approach.
+nImages are the expositions.
+
+## Spectra and PSFs
+The files are quite heavy and I leave them in the following ftp server (anonymous):
+
+`ftp.iac.es/out/aasensio/original_and_degraded.nf`
+`ftp.iac.es/out/aasensio/psfs.nf`
+
+The files are NetCDF files.
