@@ -4,7 +4,6 @@ from ipdb import set_trace as stop
 import astropy.io.fits as fits
 import scipy.io as scio
 import pyiacsun as ps
-from numba import jit
 
 def hanningWindow(nPix, percentage):
     """
@@ -72,19 +71,20 @@ f = scio.netcdf_file('/net/nas4/fis/aasensio/3dcubes/jaime/original_and_degraded
 f.createDimension('nPix', 128)
 f.createDimension('nImages', nImagesPSF)
 f.createDimension('nLambda', nLambda)
-varOriginal = f.createVariable('original', 'd', ('nLambda', 'nPix', 'nPix', 'nImages'))
-varDegraded = f.createVariable('original', 'd', ('nLambda', 'nPix', 'nPix', 'nImages'))
+varOriginal = f.createVariable('original', 'd', ('nLambda', 'nPix', 'nPix'))
+varDegraded = f.createVariable('degraded', 'd', ('nLambda', 'nPix', 'nPix', 'nImages'))
 
 for k in range(nImagesPSF):
+    print(k)
     for i in range(left,right):
         ps.util.progressbar(i-left, right-left)
         currentPSF = psf[:,:,i-left,k] / np.sum(psf[:,:,i-left,k])
         for j in range(top,bottom):
             res[:,i-left,j-top] = np.sum(spec[:,i-nPixBorder:i+nPixBorder,j-nPixBorder:j+nPixBorder] * currentPSF[None,:,:], axis=(1,2))
-
-    varOriginal[:,:,:,k] = spec[:,left:right,top:bottom]
+    
     varDegraded[:,:,:,k] = res
-        # out = conv(spec, psf[:,:,:,0], nPixBorder)
+
+varOriginal[:,:,:] = spec[:,left:right,top:bottom]
 
 f.close()
 
